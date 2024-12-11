@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora</title>
+    <link rel="stylesheet" type="text/css" href="estilo.css">
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Calculadora</h1>
+            <p id="resultado">0</p>
+            <div class="teclado">
+                <button onclick="limpar()" class="botao limpar">C</button>
+                <button onclick="adicionarOperador('/')" class="botao">/</button>
+                <button onclick="adicionarOperador('*')" class="botao">*</button>
+                <button onclick="adicionarOperador('-')" class="botao">-</button>
+                <button onclick="adicionarNumero('7')" class="botao">7</button>
+                <button onclick="adicionarNumero('8')" class="botao">8</button>
+                <button onclick="adicionarNumero('9')" class="botao">9</button>
+                <button onclick="adicionarOperador('+')" class="botao">+</button>
+                <button onclick="adicionarNumero('4')" class="botao">4</button>
+                <button onclick="adicionarNumero('5')" class="botao">5</button>
+                <button onclick="adicionarNumero('6')" class="botao">6</button>
+                <button onclick="adicionarVirgula()" class="botao">,</button>
+                <button onclick="adicionarNumero('1')" class="botao">1</button>
+                <button onclick="adicionarNumero('2')" class="botao">2</button>
+                <button onclick="adicionarNumero('3')" class="botao">3</button>
+                <button class="botao" onclick="calcular()">=</button>
+                <button onclick="adicionarNumero('0')" class="botao zero">0</button>
+            </div>            
+        </header>
+        <section>
+            <h2>Histórico</h2>
+            <table id="historico">
+                <thead>
+                    <tr>
+                        <th>Operação</th>
+                        <th>Resultado</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+    <script>
+        let display = document.querySelector('#resultado');
+        let operadorAtual = '';
+        let numeroAnterior = '';
+        var f = 0, rep = 0, calc = 0, add = 0;
+
+        function adicionarNumero(num) {
+            if (add >= 1) {
+                display.textContent = '';
+            }
+
+            if (f == 0) {
+                display.textContent = '';
+                f = 1;
+            }
+            if (rep <= 7) {
+                display.textContent += num;
+                rep++;
+            }
+            add = 0;
+        }
+
+        function adicionarOperador(op) {
+            numeroAnterior = display.textContent;
+            operadorAtual = op;
+            f = 0;
+            rep = 0;
+            display.textContent = '0';
+        }
+
+        function calcular() {
+            let numeroAtual = display.textContent.replace(',', '.');
+            if (calc == 0) {
+                var resultado = 0;
+                calc = 1;
+            }
+            switch (operadorAtual) {
+                case '+':
+                    resultado = parseFloat(numeroAnterior.replace(',', '.')) + parseFloat(numeroAtual);
+                    break;
+                case '-':
+                    resultado = parseFloat(numeroAnterior.replace(',', '.')) - parseFloat(numeroAtual);
+                    break;
+                case '*':
+                    resultado = parseFloat(numeroAnterior.replace(',', '.')) * parseFloat(numeroAtual);
+                    break;
+                case '/':
+                    resultado = parseFloat(numeroAnterior.replace(',', '.')) / parseFloat(numeroAtual);
+                    break;
+                default:
+                    resultado = 'Erro';
+            }
+            display.textContent = resultado.toString().replace('.', ',');
+            adicionarHistorico(numeroAnterior.replace('.', ','), operadorAtual, numeroAtual.replace('.', ','), resultado.toString().replace('.', ','));
+            numeroAnterior = resultado.toString().replace('.', ',');
+            add = 1;
+        }
+
+        function limpar() {
+            display.textContent = '0';
+            operadorAtual = '';
+            numeroAnterior = '';
+            f = 0;
+            rep = 0;
+        }
+
+        function adicionarVirgula() {
+            if (!display.textContent.includes(',')) {
+                display.textContent += ',';
+            }
+        }
+
+        function adicionarHistorico(numeroAnterior, operadorAtual, numeroAtual, resultado) {
+            let historico = document.querySelector('#historico tbody');
+            let novaLinha = document.createElement('tr');
+            novaLinha.innerHTML = `<td>${numeroAnterior} ${operadorAtual} ${numeroAtual}</td><td>${resultado}</td>`;
+            historico.appendChild(novaLinha);
+            if (historico.rows.length > 3) {
+                historico.deleteRow(0);
+            }
+        }
+    </script>
+</body>
+</html>
